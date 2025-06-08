@@ -7,7 +7,9 @@ class FlowRegex
     end
     
     def apply(input_mask, text, debug: false)
-      # 初期状態：入力マスクをそのまま出力に含める（0回マッチの場合）
+      # KleeneStar の正しい実装：
+      # 1. 初期状態は入力マスク（0回マッチ）
+      # 2. 段階的に内部要素を適用して拡張
       current_mask = input_mask.copy
       iteration = 0
       
@@ -19,30 +21,32 @@ class FlowRegex
       loop do
         iteration += 1
         
-        # 内部要素を適用
+        # 無限ループ防止（早期チェック）
+        if iteration > 100
+          if debug
+            puts "  Warning: Maximum iterations reached, forcing convergence"
+            puts
+          end
+          break
+        end
+        
+        # 現在のマスクのコピーを保存
+        old_mask = current_mask.copy
+        
+        # 現在のマスクに内部要素を適用
         new_bits = @element.apply(current_mask, text, debug: false)
         
-        # 新しいビットを現在のマスクに追加
-        old_mask = current_mask.copy
+        # 新しいビットを追加
         current_mask.or!(new_bits)
         
         if debug
           puts "  Iteration #{iteration}: #{current_mask.inspect}"
         end
         
-        # 収束チェック：新しいビットが追加されなかった場合
+        # 収束チェック：マスクが変化しなかった場合
         if current_mask == old_mask
           if debug
             puts "  Converged after #{iteration} iterations!"
-            puts
-          end
-          break
-        end
-        
-        # 無限ループ防止（安全装置）
-        if iteration > text.length + 10
-          if debug
-            puts "  Warning: Maximum iterations reached, forcing convergence"
             puts
           end
           break

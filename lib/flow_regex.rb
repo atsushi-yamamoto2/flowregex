@@ -23,6 +23,7 @@ class FlowRegex
   def match(text, debug: false)
     raise TextTooLongError, "Text length #{text.length} exceeds maximum #{MAX_TEXT_LENGTH}" if text.length > MAX_TEXT_LENGTH
     
+    # 単一のマッチャーで全体を処理
     matcher = FlowRegex::Matcher.new(text, debug: debug)
     matcher.match(@parsed_regex)
   end

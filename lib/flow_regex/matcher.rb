@@ -9,7 +9,7 @@ class FlowRegex
     
     def match(regex_element)
       # 初期ビットマスクを作成（文字列長+1のサイズ）
-      # 全ての位置から開始可能とする
+      # 全ての位置から開始可能とする（山本法の本来の設計）
       initial_mask = BitMask.new(@text.length + 1)
       
       # 文字列の各位置から開始可能
