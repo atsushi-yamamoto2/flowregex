@@ -1,5 +1,4 @@
 # FlowRegex - 関数合成による正規表現マッチングライブラリ
-# 山本法の実装
 
 require_relative 'flow_regex/bit_mask'
 require_relative 'flow_regex/regex_element'
