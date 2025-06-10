@@ -15,17 +15,45 @@ class FlowRegex
     
     private
     
-    # Expression := Term ('|' Term)*
+    # Expression := Lookahead ('|' Lookahead)*
     def parse_expression
-      left = parse_term
+      left = parse_lookahead
       
       while current_char == '|'
         consume('|')
-        right = parse_term
+        right = parse_lookahead
         left = Alternation.new(left, right)
       end
       
       left
+    end
+    
+    # Lookahead := ('(?=' Expression ')' | '(?!' Expression ')')? Term
+    def parse_lookahead
+      if current_char == '(' && peek(1) == '?' && (peek(2) == '=' || peek(2) == '!')
+        consume('(')
+        consume('?')
+        
+        if current_char == '='
+          # 肯定先読み (?=B)A
+          consume('=')
+          lookahead_pattern = parse_expression
+          consume(')')
+          main_pattern = parse_term
+          PositiveLookahead.new(lookahead_pattern, main_pattern)
+        elsif current_char == '!'
+          # 否定先読み (?!B)A
+          consume('!')
+          lookahead_pattern = parse_expression
+          consume(')')
+          main_pattern = parse_term
+          NegativeLookahead.new(lookahead_pattern, main_pattern)
+        else
+          raise ParseError, "Invalid lookahead syntax at position #{@pos}"
+        end
+      else
+        parse_term
+      end
     end
     
     # Term := Factor*
@@ -33,7 +61,44 @@ class FlowRegex
       factors = []
       
       while !at_end? && current_char != '|' && current_char != ')'
-        factors << parse_factor
+        # 先読み演算子をチェック
+        if current_char == '(' && peek(1) == '?' && (peek(2) == '=' || peek(2) == '!')
+          # 先読み演算子を発見した場合
+          consume('(')
+          consume('?')
+          
+          if current_char == '='
+            # 肯定先読み (?=B)A
+            consume('=')
+            lookahead_pattern = parse_expression
+            consume(')')
+            
+            # 次の要素（A）を取得
+            if !at_end? && current_char != '|' && current_char != ')'
+              main_pattern = parse_factor
+              factors << PositiveLookahead.new(lookahead_pattern, main_pattern)
+            else
+              raise ParseError, "Expected main pattern after positive lookahead at position #{@pos}"
+            end
+          elsif current_char == '!'
+            # 否定先読み (?!B)A
+            consume('!')
+            lookahead_pattern = parse_expression
+            consume(')')
+            
+            # 次の要素（A）を取得
+            if !at_end? && current_char != '|' && current_char != ')'
+              main_pattern = parse_factor
+              factors << NegativeLookahead.new(lookahead_pattern, main_pattern)
+            else
+              raise ParseError, "Expected main pattern after negative lookahead at position #{@pos}"
+            end
+          else
+            raise ParseError, "Invalid lookahead syntax at position #{@pos}"
+          end
+        else
+          factors << parse_factor
+        end
       end
       
       case factors.length
@@ -188,6 +253,12 @@ class FlowRegex
     def current_char
       return nil if @pos >= @pattern.length
       @pattern[@pos]
+    end
+    
+    def peek(offset)
+      pos = @pos + offset
+      return nil if pos >= @pattern.length
+      @pattern[pos]
     end
     
     def advance

@@ -14,6 +14,8 @@ require_relative 'flow_regex/matcher'
 require_relative 'flow_regex/fuzzy_bit_mask'
 require_relative 'flow_regex/fuzzy_literal'
 require_relative 'flow_regex/fuzzy_matcher'
+require_relative 'flow_regex/tracked_bit_mask'
+require_relative 'flow_regex/lookahead'
 
 class FlowRegex
   class ParseError < StandardError; end

@@ -102,6 +102,18 @@ result = regex.match("aab", debug: true)
 - **文字クラス内エスケープ**: `[\d\s]`, `[\w@]`, `[a-z\d]`
 - **否定**: `[^abc]`, `[^\d\s]` (指定文字以外)
 
+### 先読み演算子（積集合・補集合）
+- **肯定先読み**: `(?=B)A` (Aの積集合B、同じ開始位置でBとAの両方がマッチ)
+- **否定先読み**: `(?!B)A` (AからBの差集合、同じ開始位置でBがマッチしない場合のみA)
+- **任意位置対応**: 文字列の先頭以外でも動作
+- **複数開始位置**: 複数の開始位置での正確な集合演算
+
+### ファジーマッチング（編集距離対応）
+- **基本ファジーマッチ**: `fuzzy_match(text, max_distance: n)`
+- **編集操作**: 置換・挿入・削除をサポート
+- **距離制限**: 指定した編集距離以内のマッチを検出
+- **完全性保証**: ヒューリスティックではない厳密解
+
 ### エスケープシーケンス
 - **改行**: `\n`, **タブ**: `\t`
 - **キャリッジリターン**: `\r`
@@ -117,26 +129,43 @@ FlowRegex.new("a+b?c*").match("aaabccc")
 FlowRegex.new("(ab){2,3}").match("ababab")
 # => [4, 6]
 
-# ネストした量指定子
-FlowRegex.new("((a+b?)+c){1,2}").match("aabcaabc")
-# => [4, 8]
+# 先読み演算子（積集合・補集合）
+FlowRegex.new("(?=ab)ab*c").match("abbbcd")
+# => [5] (abで始まる場合のab*c)
+
+FlowRegex.new("(?!abc)ab*c").match("abbbcd")
+# => [5] (abcで始まらない場合のab*c)
+
+# ファジーマッチング（編集距離対応）
+FlowRegex.new("hello").fuzzy_match("helo", max_distance: 1)
+# => {1=>[4]} (1文字削除でマッチ)
+
+FlowRegex.new("cat").fuzzy_match("bat", max_distance: 1)
+# => {1=>[3]} (1文字置換でマッチ)
 ```
 
 ## 実装アーキテクチャ
 
 ```
 FlowRegex
-├── BitMask          # ビットマスク操作
-├── RegexElement     # 変換関数の基底クラス
-├── Literal          # 文字リテラル変換関数
-├── Concat           # 連接変換関数（関数合成）
-├── Alternation      # 選択変換関数（並列処理）
-├── KleeneStar       # クリーネ閉包変換関数（収束処理）
-├── Quantifier       # 汎用量指定子変換関数
-├── CharacterClass   # 文字クラス変換関数
-├── Parser           # 正規表現パーサー（文字クラス対応）
-├── Matcher          # データフローエンジン
-└── TwoStageMatcher  # 2段階マッチング（部分文字列抽出）
+├── BitMask            # ビットマスク操作
+├── TrackedBitMask     # 開始位置追跡ビットマスク（先読み用）
+├── RegexElement       # 変換関数の基底クラス
+├── Literal            # 文字リテラル変換関数
+├── Concat             # 連接変換関数（関数合成）
+├── Alternation        # 選択変換関数（並列処理）
+├── KleeneStar         # クリーネ閉包変換関数（収束処理）
+├── Quantifier         # 汎用量指定子変換関数
+├── CharacterClass     # 文字クラス変換関数
+├── AnyChar            # 任意文字変換関数
+├── PositiveLookahead  # 肯定先読み変換関数（積集合）
+├── NegativeLookahead  # 否定先読み変換関数（差集合）
+├── FuzzyBitMask       # ファジーマッチング用3次元ビットマスク
+├── FuzzyLiteral       # ファジーマッチング対応文字リテラル
+├── FuzzyMatcher       # ファジーマッチングエンジン
+├── Parser             # 正規表現パーサー（先読み対応）
+├── Matcher            # データフローエンジン
+└── TwoStageMatcher    # 2段階マッチング（部分文字列抽出）
 ```
 
 ## 制限事項（POC版）
@@ -144,7 +173,8 @@ FlowRegex
 - 文字列長上限: 1000文字
 - **Unicode対応**: 日本語（ひらがな・カタカナ・漢字）は動作確認済み
 - 後方参照（`\1`, `\2`）未対応
-- 先読み・後読み未対応
+- **先読み計算量**: 先読み演算子使用時のみ最悪ケースでO(N²)に増加（複数開始位置での集合演算のため）
+- 後読み未対応
 - 非貪欲マッチ未対応
 - 位置マッチ（`^`, `$`, `\b`）未対応
 
