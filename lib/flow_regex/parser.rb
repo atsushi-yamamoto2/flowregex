@@ -47,19 +47,72 @@ class FlowRegex
       end
     end
     
-    # Factor := Atom ('*')?
+    # Factor := Atom ('*' | '+' | '?' | '{' NUMBER (',' NUMBER?)? '}')?
     def parse_factor
       atom = parse_atom
       
-      if current_char == '*'
+      case current_char
+      when '*'
         consume('*')
         KleeneStar.new(atom)
+      when '+'
+        consume('+')
+        Plus.new(atom)
+      when '?'
+        consume('?')
+        Question.new(atom)
+      when '{'
+        parse_quantifier(atom)
       else
         atom
       end
     end
     
-    # Atom := CHAR | '(' Expression ')'
+    # 量指定子 {n} または {n,m} をパース
+    def parse_quantifier(atom)
+      consume('{')
+      
+      # 最初の数値を読む
+      min_count = parse_number
+      
+      if current_char == ','
+        consume(',')
+        if current_char == '}'
+          # {n,} の形式（n回以上）
+          consume('}')
+          RangeCount.new(atom, min_count, -1)  # -1 は無限大
+        else
+          # {n,m} の形式
+          max_count = parse_number
+          consume('}')
+          if min_count > max_count
+            raise ParseError, "Invalid quantifier range: {#{min_count},#{max_count}} at position #{@pos}"
+          end
+          RangeCount.new(atom, min_count, max_count)
+        end
+      else
+        # {n} の形式（n回ちょうど）
+        consume('}')
+        ExactCount.new(atom, min_count)
+      end
+    end
+    
+    # 数値をパース
+    def parse_number
+      start_pos = @pos
+      
+      unless current_char && current_char.match(/\d/)
+        raise ParseError, "Expected number at position #{@pos}"
+      end
+      
+      while current_char && current_char.match(/\d/)
+        advance
+      end
+      
+      @pattern[start_pos...@pos].to_i
+    end
+    
+    # Atom := CHAR | '(' Expression ')' | '[' CharClass ']' | '\' EscapeChar | '.'
     def parse_atom
       case current_char
       when '('
@@ -67,14 +120,68 @@ class FlowRegex
         expr = parse_expression
         consume(')')
         expr
+      when '['
+        parse_character_class
+      when '\\'
+        parse_escape_sequence
+      when '.'
+        advance
+        AnyChar.new
       when nil
         raise ParseError, "Unexpected end of pattern"
-      when '|', ')', '*'
+      when '|', ')', '*', '+', '?', '{', ']'
         raise ParseError, "Unexpected character '#{current_char}' at position #{@pos}"
       else
         char = current_char
         advance
         Literal.new(char)
+      end
+    end
+    
+    # 文字クラス [a-z] をパース
+    def parse_character_class
+      consume('[')
+      
+      start_pos = @pos
+      class_content = ""
+      
+      # ] までの内容を読む
+      while current_char && current_char != ']'
+        class_content += current_char
+        advance
+      end
+      
+      if current_char != ']'
+        raise ParseError, "Unclosed character class at position #{start_pos}"
+      end
+      
+      consume(']')
+      
+      if class_content.empty?
+        raise ParseError, "Empty character class at position #{start_pos}"
+      end
+      
+      CharacterClass.new(class_content)
+    end
+    
+    # エスケープシーケンス \d, \n などをパース
+    def parse_escape_sequence
+      consume('\\')
+      
+      if current_char.nil?
+        raise ParseError, "Incomplete escape sequence at end of pattern"
+      end
+      
+      escape_char = current_char
+      advance
+      
+      case escape_char
+      when 'd', 'D', 's', 'S', 'w', 'W'
+        # 文字クラス略記
+        CharacterClass.new(escape_char)
+      else
+        # 通常のエスケープシーケンス
+        EscapeSequence.new(escape_char)
       end
     end
     
