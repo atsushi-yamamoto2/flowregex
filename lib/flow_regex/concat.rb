@@ -7,12 +7,12 @@ class FlowRegex
       @second = second
     end
     
-    def apply(input_mask, text, debug: false)
+    def apply(input_mask, text, debug: false, max_distance: 0)
       # 第一要素を適用
-      intermediate_mask = @first.apply(input_mask, text, debug: debug)
+      intermediate_mask = @first.apply(input_mask, text, debug: debug, max_distance: max_distance)
       
       # 第二要素を適用（第一要素の出力を入力として使用）
-      output_mask = @second.apply(intermediate_mask, text, debug: debug)
+      output_mask = @second.apply(intermediate_mask, text, debug: debug, max_distance: max_distance)
       
       if debug
         puts "Concat (#{@first} then #{@second}):"
