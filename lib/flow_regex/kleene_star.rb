@@ -6,7 +6,7 @@ class FlowRegex
       @element = element
     end
     
-    def apply(input_mask, text, debug: false)
+    def apply(input_mask, text, debug: false, max_distance: 0)
       # KleeneStar の正しい実装：
       # 1. 初期状態は入力マスク（0回マッチ）
       # 2. 段階的に内部要素を適用して拡張
@@ -34,7 +34,7 @@ class FlowRegex
         old_mask = current_mask.copy
         
         # 現在のマスクに内部要素を適用
-        new_bits = @element.apply(current_mask, text, debug: false)
+        new_bits = @element.apply(current_mask, text, debug: false, max_distance: max_distance)
         
         # 新しいビットを追加
         current_mask.or!(new_bits)

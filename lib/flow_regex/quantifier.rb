@@ -11,46 +11,59 @@ class FlowRegex
       @max_count = Float::INFINITY if @max_count == -1
     end
     
-    def apply(input_mask, text, debug: false)
+    def apply(input_mask, text, debug: false, max_distance: 0)
       if debug
         puts "Quantifier (#{@element}){#{@min_count},#{@max_count == Float::INFINITY ? '∞' : @max_count}}:"
         puts "  Initial: #{input_mask.inspect}"
       end
       
-      # 結果マスクを初期化
-      result_mask = BitMask.new(input_mask.size)
-      
-      # 0回マッチ（min_count が 0 の場合のみ）
-      if @min_count == 0
-        result_mask.or!(input_mask)
-      end
-      
-      # 各回数でのマッチを計算
-      current_mask = input_mask.copy
-      
-      (1..[@max_count, 100].min).each do |count|
-        # 内部要素を適用
-        current_mask = @element.apply(current_mask, text, debug: false)
+      if max_distance == 0
+        # 通常のマッチング
+        result_mask = BitMask.new(input_mask.size)
         
-        # 指定回数範囲内なら結果に追加
-        if count >= @min_count
-          result_mask.or!(current_mask)
+        # 0回マッチ（min_count が 0 の場合のみ）
+        if @min_count == 0
+          result_mask.or!(input_mask)
+        end
+        
+        # 各回数でのマッチを計算
+        current_mask = input_mask.copy
+        
+        (1..[@max_count, 100].min).each do |count|
+          # 内部要素を適用
+          current_mask = @element.apply(current_mask, text, debug: false, max_distance: max_distance)
+          
+          # 指定回数範囲内なら結果に追加
+          if count >= @min_count
+            result_mask.or!(current_mask)
+          end
+          
+          if debug
+            puts "  Count #{count}: #{current_mask.inspect}"
+          end
+          
+          # マスクが空になったら終了
+          break if current_mask.empty?
         end
         
         if debug
-          puts "  Count #{count}: #{current_mask.inspect}"
+          puts "  Final: #{result_mask.inspect}"
+          puts
         end
         
-        # マスクが空になったら終了
-        break if current_mask.empty?
+        result_mask
+      else
+        # ファジーマッチング - 簡単な実装
+        # 最初の適用結果を返す（量詞のファジーマッチングは複雑なため）
+        result_mask = @element.apply(input_mask, text, debug: debug, max_distance: max_distance)
+        
+        if debug
+          puts "Quantifier (Fuzzy): #{result_mask.inspect}"
+          puts
+        end
+        
+        result_mask
       end
-      
-      if debug
-        puts "  Final: #{result_mask.inspect}"
-        puts
-      end
-      
-      result_mask
     end
     
     def to_s
