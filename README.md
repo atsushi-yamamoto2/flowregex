@@ -377,19 +377,22 @@ ruby examples/basic_usage.rb
 ### Brzozowski微分理論（1964年）
 本研究の理論的基盤は、Janusz A. Brzozowskiによる1964年の古典的研究に基づいています：
 
-**Janusz A. Brzozowski (1964)**. "Derivatives of Regular Expressions". Journal of the ACM 11(4), 481-494. https://doi.org/10.1145/321239.321249
+**Janusz A. Brzozowski (1964)**. "Derivatives of Regular Expressions". Journal of the ACM 11(4), 481-494.  
+論文リンク: https://dl.acm.org/doi/10.1145/321239.321249
 
 この研究では、正規表現の「微分」という概念が導入され、文字に対する正規表現の微分を再帰的に定義することで、オートマトン構築を経由せずに直接的な正規表現マッチングが可能であることが示されました。特に重要なのは、この理論が積集合・補集合演算を自然にサポートすることです。
 
 ### 現代的実装への発展
 
 #### 正規表現関数による実装（2003年）
-**山本篤 (2003)**. "正規表現関数による正規表現の拡張とそのパターンマッチングへの応用". 情報処理学会論文誌 44(7), 1756-1765.
+**山本篤 (2003)**. "正規表現関数による正規表現の拡張とそのパターンマッチングへの応用". 情報処理学会論文誌 44(7), 1756-1765.  
+論文リンク: https://cir.nii.ac.jp/crid/1050564287837265792
 
 Brzozowski理論を「文字列終端位置の集合を変換する関数」として実装し、関数合成による正規表現処理の実用化を図った研究です。
 
 #### 高性能微分ベース実装（2025年）
-**Ian Erik Varatalu, Margus Veanes, and Juhan Ernits (2025)**. "RE#: High Performance Derivative-Based Regex Matching with Intersection, Complement, and Restricted Lookarounds". Proc. ACM Program. Lang. 9, POPL, Article 1. https://doi.org/10.1145/3704837
+**Ian Erik Varatalu, Margus Veanes, and Juhan Ernits (2025)**. "RE#: High Performance Derivative-Based Regex Matching with Intersection, Complement, and Restricted Lookarounds". Proc. ACM Program. Lang. 9, POPL, Article 1.  
+論文リンク: https://www.microsoft.com/en-us/research/wp-content/uploads/2025/01/popl25-p2-final.pdf
 
 Brzozowski微分を記号的に実装し、積集合・補集合・制限付き先読みを高性能で実現した最新の研究です。
 
