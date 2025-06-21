@@ -64,7 +64,7 @@ FlowRegex implements **Brzozowski's derivative theory of regular expressions** a
 require_relative 'lib/flow_regex'
 ```
 
-### C Implementation (High-Performance Test Implementation)
+### C Implementation (Performance Verification - Limited Feature Set)
 ```bash
 cd c_implementation
 make
@@ -81,11 +81,14 @@ make
 ```
 
 **C Implementation Features:**
+- **Purpose**: Performance verification of bitmask operations and MatchMask optimization proof-of-concept
+- **Feature Scope**: Subset of Ruby version (basic regex syntax only)
 - **MatchMask Optimization**: 1.6x〜2.5x performance improvement through OptimizedText
 - **Shift Operation Elimination**: Efficient bitmask operations in 64-bit word units
 - **String Length Limit**: 100,000 characters (FLOWREGEX_MAX_TEXT_LENGTH)
-- **Comprehensive Testing**: All functionality verified with 20 test cases
-- **Test Implementation**: Not intended for production use
+- **Test Implementation**: Primarily for performance verification, not intended for production use
+
+**Note**: The C implementation is for performance verification of features developed in Ruby. Please use the Ruby version for the complete feature set.
 
 ## Basic Usage
 
