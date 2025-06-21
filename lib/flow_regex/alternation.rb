@@ -18,7 +18,7 @@ class FlowRegex
         end
         
         if debug
-          alt_strs = @alternatives.map(&:to_s).join(' | ')
+          alt_strs = @alternatives.map { |alt| alt.respond_to?(:to_s) ? alt.to_s : alt.class.name }.join(' | ')
           puts "Alternation (#{alt_strs}):"
           puts "  Combined Output: #{output_mask.inspect}"
           puts
@@ -46,7 +46,7 @@ class FlowRegex
         end
         
         if debug
-          alt_strs = @alternatives.map(&:to_s).join(' | ')
+          alt_strs = @alternatives.map { |alt| alt.respond_to?(:to_s) ? alt.to_s : alt.class.name }.join(' | ')
           puts "Alternation (#{alt_strs}) - Fuzzy:"
           puts "  Combined Output: #{output_mask.inspect}"
           puts
@@ -72,7 +72,7 @@ class FlowRegex
     end
     
     def to_s
-      alt_strs = @alternatives.map(&:to_s).join(' | ')
+      alt_strs = @alternatives.map { |alt| alt.respond_to?(:to_s) ? alt.to_s : alt.class.name }.join(' | ')
       "Alternation(#{alt_strs})"
     end
   end

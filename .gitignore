@@ -1,0 +1,161 @@
+# C Implementation Build Artifacts
+c_implementation/obj/
+c_implementation/*.o
+c_implementation/*.dSYM/
+c_implementation/analysis_benchmark
+c_implementation/benchmark_fair_comparison
+c_implementation/flowregex
+c_implementation/simple_test
+c_implementation/test_recursive_patterns
+c_implementation/test_runner
+c_implementation/test_with_optimization
+
+# General C/C++ Build Artifacts
+*.o
+*.a
+*.so
+*.dylib
+*.exe
+*.out
+*.app
+*.dSYM/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon?
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.tmp
+*.temp
+*.swp
+*.swo
+*~.nib
+local.properties
+.settings/
+.loadpath
+.recommenders
+.target
+.metadata
+.gradle
+build/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+# Ruby
+*.gem
+*.rbc
+/.config
+/coverage/
+/InstalledFiles
+/pkg/
+/spec/reports/
+/spec/examples.txt
+/test/tmp/
+/test/version_tmp/
+/tmp/
+.bundle/
+vendor/bundle
+lib/bundler/man/
+.rvmrc
+.rbenv-version
+.ruby-version
+.ruby-gemset
+Gemfile.lock
+
+# IDEs and Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-project
+*.sublime-workspace
+.vscode/
+.history/
+
+# Logs
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+*.lcov
+
+# Dependency directories
+node_modules/
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Backup files
+*.bak
+*.backup
+*.old
+*.orig
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Archives
+*.zip
+*.tar.gz
+*.rar
+*.7z
