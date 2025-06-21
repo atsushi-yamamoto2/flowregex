@@ -304,7 +304,7 @@ FlowRegex
 
 ## Limitations (POC Version)
 
-- String length limit: 1000 characters
+- String length limit: 10000 characters
 - **Unicode support**: Japanese (hiragana, katakana, kanji) operation confirmed
 - Backreferences (`\1`, `\2`) not supported
 - **Lookahead computational complexity**: Only increases to worst-case O(N²) when using lookahead operators (due to set operations at multiple start positions)
