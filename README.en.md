@@ -6,7 +6,7 @@ FlowRegex is a revolutionary regular expression library that implements a fundam
 
 ## Abstract
 
-We present FlowRegex, a regular expression matching library that implements Brzozowski's (1964) derivative theory of regular expressions using modern bitmask operations. The derivative theory, proposed 60 years ago, provides an excellent theoretical foundation that enables direct regex matching without automaton construction and naturally supports intersection and complement operations. Our implementation makes this theory practical through bitmask-based position set management and function composition, addressing contemporary challenges.
+We present FlowRegex, a regular expression matching library inspired by Brzozowski's (1964) derivative theory of regular expressions, implemented using modern bitmask operations and function composition. Our approach addresses contemporary challenges through bitmask-based position set management and a novel functional composition methodology that eliminates the need for automaton construction.
 
 A key achievement is theoretical immunity against ReDoS (Regular Expression Denial of Service) attacks, guaranteeing linear-time processing for any input. In experimental evaluation, our method completed processing in 0.0001 seconds for the attack pattern `(a|a|b)*$` where Ruby's regex engine (Onigmo) timed out after 3 seconds, achieving **over 29,000× performance improvement**.
 
@@ -21,7 +21,7 @@ Furthermore, through fuzzy matching extensions, we enable revolutionary applicat
 
 ### Core Innovation: Automaton-Free Architecture
 
-FlowRegex implements **Brzozowski's derivative theory of regular expressions** as a modern **"position set transformation using bitmask operations"**, achieving extremely efficient and safe regular expression matching without any automaton construction.
+FlowRegex is **inspired by Brzozowski's derivative theory of regular expressions** and implements this as a modern **"position set transformation using bitmask operations"**, achieving extremely efficient and safe regular expression matching without any automaton construction.
 
 #### Why Traditional Approaches Fall Short
 

@@ -6,7 +6,7 @@ FlowRegexは、従来のオートマトンベースのアプローチとは異�
 
 ## Abstract (概要)
 
-本研究では、Brzozowski (1964)の正規表現微分理論を現代的なビットマスク演算で実装した正規表現マッチングライブラリ「FlowRegex」を提案する。60年前に提唱された微分理論は、オートマトン構築を経由せずに直接的な正規表現マッチングを可能とし、積集合・補集合演算を自然にサポートする優れた理論的基盤を持つ。本実装では、この理論をビットマスクによる位置集合管理と関数合成により実用化し、現代的課題に対応する。
+本研究では、Brzozowski (1964)の正規表現微分理論にインスパイアされつつ、現代的なビットマスク演算と関数合成による新しい正規表現マッチングライブラリ「FlowRegex」を提案する。本手法は、ビットマスクによる位置集合管理と関数合成により、従来とは異なるアプローチで現代的課題に対応する。
 
 特に重要な成果として、ReDoS（Regular Expression Denial of Service）攻撃に対する理論的免疫を獲得し、いかなる入力に対しても線形時間での処理を保証する。実験評価において、特定の攻撃パターン `(a|a|b)*$` に対して、Ruby正規表現エンジン（Onigmo）が3秒でタイムアウトする場面で、本手法は0.0001秒で処理を完了し、**29,000倍以上の性能向上**を達成した。
 
@@ -16,7 +16,7 @@ FlowRegexは、従来のオートマトンベースのアプローチとは異�
 
 ---
 
-We present FlowRegex, a regular expression matching library that implements Brzozowski's (1964) derivative theory of regular expressions using modern bitmask operations. The derivative theory, proposed 60 years ago, provides an excellent theoretical foundation that enables direct regex matching without automaton construction and naturally supports intersection and complement operations. Our implementation makes this theory practical through bitmask-based position set management and function composition, addressing contemporary challenges.
+We present FlowRegex, a regular expression matching library inspired by Brzozowski's (1964) derivative theory of regular expressions, implemented using modern bitmask operations and function composition. Our approach addresses contemporary challenges through bitmask-based position set management and a novel functional composition methodology.
 
 A key achievement is theoretical immunity against ReDoS (Regular Expression Denial of Service) attacks, guaranteeing linear-time processing for any input. In experimental evaluation, our method completed processing in 0.0001 seconds for the attack pattern `(a|a|b)*$` where Ruby's regex engine (Onigmo) timed out after 3 seconds, achieving **over 29,000× performance improvement**.
 
@@ -31,7 +31,7 @@ Furthermore, through fuzzy matching extensions, we enable revolutionary applicat
 
 ### 基本概念
 
-FlowRegex は、**ブルゾフスキーの正規表現の導関数理論**を基盤としつつ、その概念を現代的な**ビットマスク操作による「位置の集合の変換」** として実装することで、非常に効率的かつ安全な正規表現マッチングを実現しています。
+FlowRegex は、**Brzozowski の正規表現微分理論にインスパイアされつつ**、その概念を現代的な**ビットマスク操作による「位置の集合の変換」** として実装することで、非常に効率的かつ安全な正規表現マッチングを実現しています。
 
 #### 1. 関数合成による処理：位置集合の変換
 
