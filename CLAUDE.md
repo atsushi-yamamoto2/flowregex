@@ -169,9 +169,6 @@ Use this template for all Pull Requests:
 
 ## Changes Made
 <!-- List of specific changes -->
--
--
--
 
 ## Testing
 <!-- How was this tested? -->
