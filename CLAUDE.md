@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to the AI assistant when working with code in this repository.
 
 ## Project Overview
 
@@ -27,20 +27,35 @@ FlowRegex is a revolutionary regular expression library implementing the "Flow R
 - **Features**: Limited subset of Ruby functionality, optimized for speed
 - **Build System**: Standard Makefile-based build
 
+## Development Environment
+
+### Ruby
+- **Version**: Assumed to be `3.0.0` or later.
+- **Dependencies**: No external gem dependencies. `Bundler` is not used.
+- **Testing Framework**: `Minitest` (Ruby's built-in testing library).
+
+### C
+- **Compiler**: `gcc` as defined in `c_implementation/Makefile`.
+- **Static Analysis**: `cppcheck` is used for static analysis via `make analyze`.
+
 ## Development Commands
 
 ### Ruby Development
 ```bash
-# Basic test execution
+# Run the main test suite
 ruby test/test_flow_regex.rb
 
-# Quick functionality test
+# Run a single test method from a file (useful for focused development)
+# Example: ruby test/test_flow_regex.rb -n /test_a_specific_pattern/
+ruby test/test_flow_regex.rb -n /<test_name_pattern>/
+
+# Use the scratchpad for quick, disposable experiments
 ruby quick_test.rb
 
 # Run examples
 ruby examples/basic_usage.rb
 
-# Complex pattern testing
+# Run complex pattern tests
 ruby test_complex.rb
 ```
 
@@ -51,25 +66,42 @@ cd c_implementation
 # Build all targets
 make all
 
-# Run basic tests
+# Run the main test runner
 make test
 ./test_runner
 
-# Run comprehensive test suite
+# Run the comprehensive test suite script
 ./run_all_tests.sh
 
-# Run optimization tests
-./test_with_optimization
-
-# Run recursive pattern tests
-./test_recursive_patterns
-
-# Performance benchmarks
+# Run performance benchmarks
 make analysis_benchmark
 ./analysis_benchmark
 
+# Run static analysis
+make analyze
+
+# Run memory checks with Valgrind
+make memcheck
+
 # Clean build artifacts
 make clean
+```
+
+## AI Assistant Guidelines
+
+### Your Role
+Your primary role is to assist in developing, testing, and documenting the FlowRegex library. You should be proactive in suggesting improvements, writing clean and efficient code, and adhering to the project's conventions.
+
+### File Roles & Modification Strategy
+- **Core Logic (High Caution)**: Files in `lib/` and `c_implementation/src/` are critical. Changes must be carefully considered, well-tested, and justified.
+- **Testing (High Activity)**: Files in `test/` and `c_implementation/tests/` should be actively modified and extended. When adding features or fixing bugs, always add or update corresponding tests.
+- **Experimentation (Free-form)**: `quick_test.rb` is your scratchpad. Use it freely to try out ideas, demonstrate concepts, or verify logic before integrating it into the main codebase.
+
+### Debugging
+The `debug: true` parameter in the Ruby `FlowRegex` constructor is your primary debugging tool. Use it to get detailed execution traces.
+```ruby
+# Example of enabling debug mode for analysis
+FlowRegex.new('a.c', debug: true).match('abc')
 ```
 
 ## Core Concepts
@@ -90,37 +122,22 @@ FlowRegex uses transformation functions that convert position sets (bitmasks) re
 ## Testing Strategy
 
 ### Ruby Tests
-- **Unit Tests**: Individual component testing in `test/` directory
-- **Integration Tests**: End-to-end pattern matching validation
-- **Performance Tests**: ReDoS immunity and speed comparisons
-- **Fuzzy Matching Tests**: Edit distance algorithm validation
+- **Unit Tests**: Individual component testing in `test/` directory.
+- **Integration Tests**: End-to-end pattern matching validation.
+- **Performance Tests**: ReDoS immunity and speed comparisons.
+- **Fuzzy Matching Tests**: Edit distance algorithm validation.
 
 ### C Tests
-- **Functional Tests**: Core algorithm correctness
-- **Optimization Tests**: MatchMask performance validation
-- **Memory Tests**: Valgrind integration via `make memcheck`
-- **Static Analysis**: cppcheck via `make analyze`
-
-## Performance Characteristics
-
-### Optimal Use Cases
-1. **Genomic Analysis**: 4-character alphabets (ATGC) with large datasets
-2. **ReDoS-Vulnerable Patterns**: Patterns that cause exponential backtracking
-3. **Repeated Processing**: Same text with multiple patterns
-4. **Large-Scale Data**: Where linear time guarantee is critical
-
-### Performance Limitations
-- Simple patterns may be slower than optimized traditional engines
-- POC implementation prioritizes correctness over speed optimization
-- Memory usage scales with text length for position tracking
+- **Functional Tests**: Core algorithm correctness via `make test`.
+- **Optimization Tests**: MatchMask performance validation.
+- **Memory Tests**: Valgrind integration via `make memcheck`.
+- **Static Analysis**: `cppcheck` via `make analyze`.
 
 ## Development Guidelines
 
-### Code Organization
-- Ruby implementation is the reference implementation with full features
-- C implementation focuses on core algorithm performance validation
-- Test files are distributed across multiple directories for different purposes
-- Examples demonstrate practical usage patterns
+### Code Style
+- **Ruby**: Adhere to the standard Ruby community style guide. Prioritize clarity, simplicity, and maintainability.
+- **C**: Follow the conventions present in the existing C code (e.g., variable naming, comment style).
 
 ### Key Files to Understand
 - `lib/flow_regex/parser.rb` - Pattern parsing and AST construction
@@ -129,22 +146,16 @@ FlowRegex uses transformation functions that convert position sets (bitmasks) re
 - `c_implementation/src/flowregex.c` - C algorithm implementation
 - `c_implementation/src/optimized_text.c` - MatchMask optimization
 
-### Common Development Patterns
-- Use `debug: true` parameter for detailed execution tracing
-- Fuzzy matching requires explicit max_distance parameter
-- MatchMask optimization applies automatically for supported patterns
-- Two-stage matching enables substring extraction when needed
-
 ## Pull Request Guidelines
 
 ### IMPORTANT: Always Create Pull Requests for Completed Tasks
 
 When you complete any development task, you MUST create a Pull Request using the following process:
 
-1. **Commit your changes** with a descriptive message
-2. **Create a new branch** for the feature/fix
-3. **Ask for user approval** before creating the Pull Request
-4. **Create a Pull Request** using the `gh pr create` command only after user confirmation
+1. **Commit your changes** with a descriptive message.
+2. **Create a new branch** for the feature/fix.
+3. **Ask for user approval** before creating the Pull Request.
+4. **Create a Pull Request** using the `gh pr create` command only after user confirmation.
 
 **CRITICAL**: NEVER execute `gh pr create` without explicit user approval. ALWAYS ask "Should I create a Pull Request for this task?" and wait for confirmation before proceeding.
 
@@ -158,9 +169,9 @@ Use this template for all Pull Requests:
 
 ## Changes Made
 <!-- List of specific changes -->
-- 
-- 
-- 
+-
+-
+-
 
 ## Testing
 <!-- How was this tested? -->
@@ -192,9 +203,10 @@ Use this template for all Pull Requests:
 Closes #
 
 ---
-🤖 Generated with [Claude Code](https://claude.ai/code)
+🤖 Generated with [Claude Code](https://claude.ai/code) & [Gemini Code Assist]
 
 Co-Authored-By: Claude <noreply@anthropic.com>
+Co-Authored-By: Gemini <noreply@google.com>
 ```
 
 ### Pull Request Creation Process
